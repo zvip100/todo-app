@@ -1,0 +1,14 @@
+# Visual Studio Code settings
+.vscode/
+VSWorkspaceState.json
+
+# Visual Studio settings
+.vs/
+.slnx.sqlite
+
+# Build and test files
+*.testlog
+*.testlog.manifest
+
+# Node modules and dependencies
+node_modules/
