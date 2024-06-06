@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "My version of the Dodo-app assignment for the **PRG2301** class",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "type": "module"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",

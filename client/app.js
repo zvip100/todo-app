@@ -1,29 +1,12 @@
-let tasks = [
-  {
-    title: "Register on VP",
-    done: true,
-  },
-  {
-    title: "Learn React.js",
-    done: false,
-  },
-  {
-    title: "Learn Express.js",
-    done: false,
-  },
-];
-
-/** {
-    id : 1,
-    title : '',
-    dueDate : null,
-    done : false,
-    description : '',
-    userName : ''
+let tasks = [];
+async function main() {
+  let response = await fetch("http://localhost:3000/tasks");
+  tasks = await response.json();
+  console.log(tasks);
 }
-*/
+main();
 
-function addTaskBtnClicked() {
+async function addTaskBtnClicked() {
   //get the task title from the input
   //get the task input element
   let inputElement = document.querySelector("#new-task");
@@ -32,13 +15,25 @@ function addTaskBtnClicked() {
   let newTaskValue = inputElement.value;
 
   if (!newTaskValue) return;
-
+  function generateRandomInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
   let newTaskObject = {
+    id: generateRandomInteger(1, 10000),
     title: newTaskValue,
     done: false,
   };
   //add the task object to the tasks array
   tasks.push(newTaskObject);
+  const response = await fetch("http://localhost:3000/tasks", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newTaskObject),
+  });
+  const result = await response.json();
+  console.log(result);
 
   //display the task in the document
   displayTasks();
@@ -54,7 +49,7 @@ function displayTasks() {
   for (let i = 0; i < tasks.length; i++) {
     let task = tasks[i];
 
-    let taskElement = buildTaskElement(task, i);
+    let taskElement = buildTaskElement(task, task.id);
     if (task.done) {
       doneSectionElement.appendChild(taskElement);
     } else {
@@ -63,16 +58,19 @@ function displayTasks() {
   }
 }
 
-function taskCompleted(btnComleteElement) {
+async function taskCompleted(btnComleteElement) {
   let id = btnComleteElement.parentNode.parentNode.getAttribute("data-task-id");
-  tasks[id].done = true;
+  await fetch(`http://localhost:3000/tasks/${id}`, {
+    method: "PATCH",
+  });
+  tasks.find((task) => Number(task.id).toString() === id).done = true;
   displayTasks();
 }
 
 function buildTaskElement(task, index) {
   let taskElement = document.createElement("div");
   taskElement.classList.add("task");
-
+  //
   taskElement.setAttribute("data-task-id", index);
 
   taskElement.innerHTML = `<p>${task.title}</p>
@@ -96,7 +94,7 @@ function buildTaskElement(task, index) {
         </svg>
       </button>`
     }
-      <button onclick="deleteTask(this)"> 
+      <button onclick="deleteTask(this)">
         <svg
           width="19"
           height="24"
