@@ -1,18 +1,28 @@
-const TITLE = 'Welcome to our ToDo App!!!';
+const TITLE = "Welcome to our ToDo App!!!";
 
+async function signUpBtnClicked() {
+  let nameInputEl = document.getElementById("user-name-input");
+  let pswdInputEl = document.getElementById("password-input");
 
-function loginBtnClicked() {
-  let inputEl = document.querySelector("#user-name-input");
-  let userName = inputEl.value;
-
+  let userInfo = {
+    userName: nameInputEl.value,
+    password: pswdInputEl.value,
+  };
+  
+  const response = await fetch("http://localhost:3000/sign-up", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userInfo),
+  });
+  const result = await response.json();
 
   setTimeout(displayApp, 500);
 
-  let loginBtn = document.querySelector('#login-btn');
+  let loginBtn = document.querySelector("#login-btn");
 
-  loginBtn.innerText = 'Logging In...';
-
-  
+  loginBtn.innerText = "Logging In...";
 }
 
 function displayApp() {
@@ -26,19 +36,17 @@ function displayApp() {
   displayTasks();
 }
 
-function displayTitleTillIndex(index){
-  let subTitle = TITLE.substring(0, index+1);
-  let h1El = document.querySelector('#app-title');
-  if(index < TITLE.length-1) subTitle += '_';
+function displayTitleTillIndex(index) {
+  let subTitle = TITLE.substring(0, index + 1);
+  let h1El = document.querySelector("#app-title");
+  if (index < TITLE.length - 1) subTitle += "_";
   h1El.innerText = subTitle;
 }
 
-
-function displayTitle(){
-  for(let i = 0; i < TITLE.length; i++){
-    setTimeout(function() {
+function displayTitle() {
+  for (let i = 0; i < TITLE.length; i++) {
+    setTimeout(function () {
       displayTitleTillIndex(i);
-    }, i*100);
+    }, i * 100);
   }
-
 }
