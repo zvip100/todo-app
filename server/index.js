@@ -31,6 +31,26 @@ app.post("/sign-up", async (req, res) => {
   });
 });
 
+app.post("/login", async (req, res) => {
+  try {
+    const result = await db.oneOrNone(
+      'select * from public.person where "name" = (${userName}) and pass = (${password})',
+      {
+        userName: req.body.userName,
+        password: req.body.password,
+      }
+    );
+    console.log("result", result);
+    if (!result) {
+      res.json({ ok: false });
+    }
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
 app.post("/tasks", async (req, res) => {
   const result = await db.one(
     "insert into public.task (title, user_id) values (${title}, ${user_id}) returning *",
