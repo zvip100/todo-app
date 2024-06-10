@@ -13,10 +13,10 @@ async function addTaskBtnClicked() {
   //get the value of the element
   let newTaskValue = inputElement.value;
 
+  inputElement.value = "";
+ 
   if (!newTaskValue) return;
-  function generateRandomInteger(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+
   let newTaskObject = {
     id: "",
     userId: userInfo.id,
