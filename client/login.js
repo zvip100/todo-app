@@ -1,5 +1,7 @@
 const TITLE = "Welcome to our ToDo App!!!";
 
+let userInfo = {};
+
 function isEmpty(value) {
   if (value === null || value === undefined || value === "") {
     return true;
@@ -12,7 +14,7 @@ async function signUpBtnClicked() {
   let nameInputEl = document.getElementById("user-name-input");
   let pswdInputEl = document.getElementById("password-input");
 
-  let userInfo = {
+  userInfo = {
     userName: nameInputEl.value,
     password: pswdInputEl.value,
   };
@@ -29,20 +31,22 @@ async function signUpBtnClicked() {
     },
     body: JSON.stringify(userInfo),
   });
+
   const result = await response.json();
+  userInfo.id = result.userId;
 
-  setTimeout(displayApp, 500);
+  let successMsg = document.getElementById("account-created-msg");
+  successMsg.style.display = "block";
 
-  let loginBtn = document.querySelector("#login-btn");
-
-  loginBtn.innerText = "Logging In...";
+  main();
+  setTimeout(displayApp, 1500);
 }
 
 async function loginBtnClicked() {
   let nameInputEl = document.getElementById("user-name-input");
   let pswdInputEl = document.getElementById("password-input");
 
-  let userInfo = {
+  userInfo = {
     userName: nameInputEl.value,
     password: pswdInputEl.value,
   };
@@ -59,8 +63,10 @@ async function loginBtnClicked() {
     },
     body: JSON.stringify(userInfo),
   });
+
   const result = await response.json();
-  console.log(result);
+  userInfo.id = result.userId;
+
   if (result.ok === false) {
     alert("Username or Password is not correct");
     nameInputEl.value = "";
@@ -68,6 +74,7 @@ async function loginBtnClicked() {
     return;
   }
 
+  main();
   setTimeout(displayApp, 500);
 
   let loginBtn = document.querySelector("#login-btn");

@@ -1,10 +1,9 @@
 let tasks = [];
 async function main() {
-  let response = await fetch("http://localhost:3000/tasks");
+  const userId = userInfo.id;
+  const response = await fetch(`http://localhost:3000/tasks/${userId}`);
   tasks = await response.json();
-  console.log(tasks);
 }
-main();
 
 async function addTaskBtnClicked() {
   //get the task title from the input
@@ -19,7 +18,8 @@ async function addTaskBtnClicked() {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
   let newTaskObject = {
-    id: generateRandomInteger(1, 10000),
+    id: "",
+    userId: userInfo.id,
     title: newTaskValue,
     done: false,
   };
@@ -33,7 +33,6 @@ async function addTaskBtnClicked() {
     body: JSON.stringify(newTaskObject),
   });
   const result = await response.json();
-  console.log(result);
 
   //display the task in the document
   displayTasks();
@@ -60,9 +59,19 @@ function displayTasks() {
 
 async function taskCompleted(btnComleteElement) {
   let id = btnComleteElement.parentNode.parentNode.getAttribute("data-task-id");
-  await fetch(`http://localhost:3000/tasks/${id}`, {
+  // id var is not defined right after creating the new task, only after refreshing the page. gotta fix it!
+  console.log(id);
+  const response = await fetch(`http://localhost:3000/tasks/${id}`, {
     method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId: userInfo.id }),
   });
+
+  const result = await response.json();
+  console.log(result);
+
   tasks.find((task) => Number(task.id).toString() === id).done = true;
   displayTasks();
 }

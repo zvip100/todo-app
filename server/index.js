@@ -16,6 +16,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const PORT = "3000";
+
 app.post("/sign-up", async (req, res) => {
   const result = await db.one(
     'insert into public.person ("name", pass) values (${userName}, ${password}) returning *',
@@ -25,9 +27,11 @@ app.post("/sign-up", async (req, res) => {
     }
   );
   console.log("result", result);
+
   res.json({
-    userName: result.userName,
-    password: result.password,
+    userId: result.id,
+    userName: result.name,
+    password: result.pass,
   });
 });
 
@@ -45,7 +49,30 @@ app.post("/login", async (req, res) => {
       res.json({ ok: false });
     }
 
-    res.json({ ok: true });
+    res.json({ ok: true, userId: result.id });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.get("/tasks/:userId", async (req, res) => {
+  try {
+    const result = await db.any(
+      "select * from public.task where user_id = ${userId} and deleted_at is null",
+      {
+        userId: req.params.userId,
+      }
+    );
+
+    console.log("result", result);
+    res.json(
+      result.map((task) => ({
+        id: task.id,
+        userId: task.user_id,
+        title: task.title,
+        done: task.status !== "active",
+      }))
+    );
   } catch (err) {
     console.log(err);
   }
@@ -56,38 +83,33 @@ app.post("/tasks", async (req, res) => {
     "insert into public.task (title, user_id) values (${title}, ${user_id}) returning *",
     {
       title: req.body.title,
-      user_id: 1,
+      user_id: req.body.userId,
     }
   );
+
   console.log("result", result);
   res.json({
+    id: result.id,
+    userId: result.user_id,
     title: result.title,
     done: false,
-    id: result.id,
   });
 });
 
-app.get("/tasks", async (req, res) => {
-  const result = await db.many(
-    "select * from public.task where deleted_at is null"
-  );
-  res.json(
-    result.map((task) => ({
-      id: task.id,
-      title: task.title,
-      done: task.status !== "active",
-    }))
-  );
-});
-
 app.patch("/tasks/:id", async (req, res) => {
-  const result = await db.none(
-    "update public.task set status = 'done' where id = ${id}",
-    {
-      id: req.params.id,
-    }
-  );
-  res.json({ ok: true });
+  try {
+    const result = await db.oneOrNone(
+      "update public.task set status = 'done' where id = ${id} and user_id = ${userId} returning *",
+      {
+        id: req.params.id,
+        userId: req.body.userId,
+      }
+    );
+    console.log("patch result: ", result);
+    res.json({ ok: true });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 app.delete("/tasks/:id", async (req, res) => {
@@ -97,6 +119,8 @@ app.delete("/tasks/:id", async (req, res) => {
   res.json({ ok: true });
 });
 
-app.listen("3000", () => {
-  console.log("the server is now running and listening for requests");
+app.listen(PORT, () => {
+  console.log(
+    `the server is now running and listening for requests at http://localhost:${PORT}`
+  );
 });
