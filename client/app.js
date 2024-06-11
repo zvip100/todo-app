@@ -14,7 +14,7 @@ async function addTaskBtnClicked() {
   let newTaskValue = inputElement.value;
 
   inputElement.value = "";
- 
+
   if (!newTaskValue) return;
 
   let newTaskObject = {
@@ -25,6 +25,7 @@ async function addTaskBtnClicked() {
   };
   //add the task object to the tasks array
   tasks.push(newTaskObject);
+
   const response = await fetch("http://localhost:3000/tasks", {
     method: "POST",
     headers: {
@@ -33,6 +34,8 @@ async function addTaskBtnClicked() {
     body: JSON.stringify(newTaskObject),
   });
   const result = await response.json();
+  tasks[tasks.length - 1].id = result.id;
+  console.log(tasks);
 
   //display the task in the document
   displayTasks();
@@ -57,10 +60,10 @@ function displayTasks() {
   }
 }
 
-async function taskCompleted(btnComleteElement) {
-  let id = btnComleteElement.parentNode.parentNode.getAttribute("data-task-id");
-  // id var is not defined right after creating the new task, only after refreshing the page. gotta fix it!
-  console.log(id);
+async function taskCompleted(btnCompleteElement) {
+  let id =
+    btnCompleteElement.parentNode.parentNode.getAttribute("data-task-id");
+
   const response = await fetch(`http://localhost:3000/tasks/${id}`, {
     method: "PATCH",
     headers: {

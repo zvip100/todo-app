@@ -113,10 +113,19 @@ app.patch("/tasks/:id", async (req, res) => {
 });
 
 app.delete("/tasks/:id", async (req, res) => {
-  await db.none("update public.task set deleted_at = now() where id = ${id}", {
-    id: req.params.id,
-  });
-  res.json({ ok: true });
+  try {
+    const result = await db.oneOrNone(
+      "update public.task set deleted_at = now() where id = ${id} and user_id = ${userId} returning *",
+      {
+        id: req.params.id,
+        userId: req.body.userId,
+      }
+    );
+    console.log("delete result: ", result);
+    res.json({ ok: true });
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 app.listen(PORT, () => {

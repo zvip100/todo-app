@@ -1,6 +1,7 @@
 const TITLE = "Welcome to our ToDo App!!!";
 
-let userInfo = {};
+//Object which containes the logged-in user's info which we access throughout the program.
+let userInfo = {}; 
 
 function isEmpty(value) {
   if (value === null || value === undefined || value === "") {
