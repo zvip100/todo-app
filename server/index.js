@@ -1,14 +1,17 @@
 import express from "express";
 import cors from "cors";
 import pgPromise from "pg-promise";
+import dbPswd from "./db-pswd.js";
 
+const dbpass = dbPswd;
 const pgp = pgPromise();
+
 const db = pgp({
   host: "ep-white-field-a6m3jd5i.us-west-2.retooldb.com",
   port: 5432,
   database: "retool",
   user: "retool",
-  password: "tLk94ITwGvMR",
+  password: dbpass,
   ssl: true,
 });
 
@@ -26,7 +29,7 @@ app.post("/sign-up", async (req, res) => {
       password: req.body.password,
     }
   );
-  console.log("result", result);
+  console.log("sign-up post result", result);
 
   res.json({
     userId: result.id,
@@ -44,9 +47,10 @@ app.post("/login", async (req, res) => {
         password: req.body.password,
       }
     );
-    console.log("result", result);
+    console.log("login post result", result);
     if (!result) {
       res.json({ ok: false });
+      return;
     }
 
     res.json({ ok: true, userId: result.id });
@@ -64,7 +68,7 @@ app.get("/tasks/:userId", async (req, res) => {
       }
     );
 
-    console.log("result", result);
+    console.log("tasks get result", result);
     res.json(
       result.map((task) => ({
         id: task.id,
@@ -87,7 +91,7 @@ app.post("/tasks", async (req, res) => {
     }
   );
 
-  console.log("result", result);
+  console.log("tasks post result", result);
   res.json({
     id: result.id,
     userId: result.user_id,

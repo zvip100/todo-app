@@ -33,9 +33,9 @@ async function addTaskBtnClicked() {
     },
     body: JSON.stringify(newTaskObject),
   });
+  
   const result = await response.json();
   tasks[tasks.length - 1].id = result.id;
-  console.log(tasks);
 
   //display the task in the document
   displayTasks();

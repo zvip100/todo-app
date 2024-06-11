@@ -12,3 +12,8 @@ VSWorkspaceState.json
 
 # Node modules and dependencies
 node_modules/
+
+# env files
+.env
+
+db-pswd.js
