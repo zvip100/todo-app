@@ -2,16 +2,21 @@ import express from "express";
 import cors from "cors";
 import pgPromise from "pg-promise";
 import dbPswd from "./db-pswd.js";
+import { configDotenv } from "dotenv";
 
-const dbpass = dbPswd;
+//const dbpass = dbPswd;
 const pgp = pgPromise();
+
+const env = configDotenv();
+console.log(env);
 
 const db = pgp({
   host: "ep-white-field-a6m3jd5i.us-west-2.retooldb.com",
   port: 5432,
   database: "retool",
   user: "retool",
-  password: dbpass,
+  //password: dbpass,
+  password: process.env.DB_PSWD,
   ssl: true,
 });
 
@@ -19,7 +24,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = "3000";
+const PORT = process.env.PORT;
+//const PORT = "3000";
 
 app.post("/sign-up", async (req, res) => {
   const result = await db.one(
