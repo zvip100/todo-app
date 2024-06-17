@@ -1,4 +1,5 @@
 let tasks = [];
+
 async function main() {
   const userId = userInfo.id;
   const response = await fetch(`http://localhost:3000/tasks/${userId}`);
@@ -18,7 +19,7 @@ async function addTaskBtnClicked() {
   if (!newTaskValue) return;
 
   let newTaskObject = {
-    id: "",
+    id: 0,
     userId: userInfo.id,
     title: newTaskValue,
     done: false,
@@ -33,7 +34,7 @@ async function addTaskBtnClicked() {
     },
     body: JSON.stringify(newTaskObject),
   });
-  
+
   const result = await response.json();
   tasks[tasks.length - 1].id = result.id;
 

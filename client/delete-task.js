@@ -1,4 +1,3 @@
-
 tasks.forEach((element) => {
   element.deleted = false;
 });
@@ -8,8 +7,6 @@ tasks.forEach((element) => {
 */
 async function deleteTask(deleteBtn) {
   let getTaskId = deleteBtn.parentNode.parentNode.getAttribute("data-task-id");
-  //let section = await findSection(getTaskId);
- // let taskElement = section.querySelector(`[data-task-id="${getTaskId}"]`);
 
   let userConfirmation = confirm("Are you sure you want to delete this task?");
   if (!userConfirmation) {
@@ -17,7 +14,6 @@ async function deleteTask(deleteBtn) {
   }
 
   let id = getTaskId;
-  console.log(id);
 
   const response = await fetch(`http://localhost:3000/tasks/${id}`, {
     method: "DELETE",
@@ -30,8 +26,13 @@ async function deleteTask(deleteBtn) {
   const result = await response.json();
   console.log(result);
 
+  let arrIndex = tasks.findIndex((task) => Number(task.id).toString() === id);
+
+  let section = findSection(arrIndex);
+  let taskElement = section.querySelector(`[data-task-id="${id}"]`);
+
   section.removeChild(taskElement);
-  tasks[getTaskId].deleted = true;
+  tasks[arrIndex].deleted = true;
   removeDeletedTasks();
 
   //Call the "displayTasks" function in order to re-organize our "data-task-id's" for the remaining tasks
@@ -39,8 +40,8 @@ async function deleteTask(deleteBtn) {
 }
 
 //Check whether the task the user wants to delete is in "to-do" section or in the "done" section
-async function findSection(TaskId) {
-  if (tasks[TaskId].done) {
+function findSection(index) {
+  if (tasks[index].done) {
     let doneSection = document.getElementById("done-list");
     return doneSection;
   } else {

@@ -7,8 +7,8 @@ import { configDotenv } from "dotenv";
 //const dbpass = dbPswd;
 const pgp = pgPromise();
 
-const env = configDotenv();
-console.log(env);
+const envConfig = configDotenv();
+console.log(envConfig);
 
 const db = pgp({
   host: "ep-white-field-a6m3jd5i.us-west-2.retooldb.com",
